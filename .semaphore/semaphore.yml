@@ -11,10 +11,16 @@ blocks:
         - name: 'Job #1'
           commands:
             - checkout
+            - 'echo "${DOCKER_PASSWORD}" | docker login -u "${DOCKER_USERNAME}" --password-stdin'
+            - 'docker pull "${DOCKER_USERNAME}/dockerizing-nodejs-addressbook:latest" || true'
+            - 'docker build --cache-from "${DOCKER_USERNAME}/dockerizing-nodejs-addressbook:latest" -t "${DOCKER_USERNAME}/dockerizing-nodejs-addressbook:latest" .'
+            - 'docker push "${DOCKER_USERNAME}/dockerizing-nodejs-addressbook:latest"'
       agent:
         machine:
           type: e1-standard-2
           os_image: ubuntu1804
+      secrets:
+        - name: dockerhub
   - name: 'Block #2'
     task:
       jobs:
