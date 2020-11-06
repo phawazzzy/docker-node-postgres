@@ -21,8 +21,16 @@ blocks:
           os_image: ubuntu1804
       secrets:
         - name: dockerhub
-  - name: 'Block #2'
+  - name: Test
     task:
       jobs:
-        - name: 'Job #1'
-          commands: []
+        - name: Integration Test
+          commands:
+            - docker-compose run addressbook npm test
+      secrets:
+        - name: dockerhub
+      prologue:
+        commands:
+          - checkout
+          - 'echo "${DOCKER_PASSWORD}" | docker login -u "${DOCKER_USERNAME}" --password-stdin'
+          - cat docker-compose.ci.yml | envsubst | tee docker-compose.yml
